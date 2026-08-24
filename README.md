@@ -74,3 +74,12 @@ Donations fund additional production. A donor may open the funded-direction issu
 ## License
 
 Apache-2.0. See [LICENSE](LICENSE).
+
+
+## Install and run
+
+```sh
+chmod +x install.sh run.sh
+./install.sh
+./run.sh --help
+```
