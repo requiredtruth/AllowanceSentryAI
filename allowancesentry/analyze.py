@@ -7,6 +7,7 @@ from typing import Any
 UINT256_MAX = 2**256 - 1
 _ADDRESS = re.compile(r"0x[0-9a-fA-F]{40}\Z")
 _HASH = re.compile(r"0x[0-9a-fA-F]{64}\Z")
+_DECIMAL_INTEGER = re.compile(r"(?:0|[1-9][0-9]*)\Z")
 _STANDARDS = {"erc20", "erc721-operator", "erc1155-operator"}
 
 
@@ -21,12 +22,12 @@ def _address(value: Any, field: str) -> str:
 
 
 def _integer(value: Any, field: str, *, positive: bool = False) -> int:
-    if isinstance(value, bool):
-        raise AnalysisError(f"{field} must be an integer")
-    try:
+    if isinstance(value, int) and not isinstance(value, bool):
+        result = value
+    elif isinstance(value, str) and _DECIMAL_INTEGER.fullmatch(value) is not None:
         result = int(value)
-    except (TypeError, ValueError) as exc:
-        raise AnalysisError(f"{field} must be an integer") from exc
+    else:
+        raise AnalysisError(f"{field} must be an integer or canonical decimal string")
     if result < (1 if positive else 0):
         raise AnalysisError(f"{field} is out of range")
     return result
