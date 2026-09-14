@@ -52,6 +52,26 @@ class AnalyzeTests(unittest.TestCase):
         self.assertEqual(report["summary"]["active"], 0)
         self.assertEqual(report["unsigned_revocations"], [])
 
+    def test_fractional_allowance_is_rejected_instead_of_truncated(self) -> None:
+        with self.assertRaisesRegex(AnalysisError, "canonical decimal string"):
+            analyze_snapshot(snapshot([{
+                "standard": "erc20", "token": TOKEN_A, "spender": ACTOR_A,
+                "allowance": 1.9,
+            }]))
+
+    def test_fractional_balance_is_rejected_instead_of_truncated(self) -> None:
+        with self.assertRaisesRegex(AnalysisError, "canonical decimal string"):
+            analyze_snapshot(snapshot([{
+                "standard": "erc20", "token": TOKEN_A, "spender": ACTOR_A,
+                "allowance": "2", "balance": 1.1,
+            }]))
+
+    def test_noncanonical_decimal_string_is_rejected(self) -> None:
+        data = snapshot([])
+        data["block_number"] = "020000000"
+        with self.assertRaisesRegex(AnalysisError, "canonical decimal string"):
+            analyze_snapshot(data)
+
     def test_duplicate_pair_is_rejected(self) -> None:
         row = {"standard": "erc20", "token": TOKEN_A, "spender": ACTOR_A, "allowance": 1}
         with self.assertRaisesRegex(AnalysisError, "duplicates"):

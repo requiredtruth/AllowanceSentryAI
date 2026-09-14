@@ -29,7 +29,17 @@ The analyzer labels active exposure shapes as `unlimited`, `above-observed-balan
 Python 3.11 or newer is required.
 
 ```bash
-python -m allowancesentry examples/snapshot.json
+./install.sh
+./run.sh
+```
+
+The normal entry point opens a PySide6 control panel with live status, output,
+and actions for the bundled offline demo, test suite, repair, and stop. Run the
+same bundled demo directly with `./demo.sh`, or use `./cli.sh` for CLI-only
+operation:
+
+```bash
+./cli.sh examples/snapshot.json
 ```
 
 Write only the unsigned call bundle while still printing the full report:
@@ -50,7 +60,7 @@ The AI endpoint must be HTTP(S) on `localhost`, `127.0.0.1`, or `::1`. AI commen
 
 ## Snapshot format
 
-Every snapshot requires `chain_id`, `block_number`, `owner`, a human-readable `source`, and an `observations` array. A `block_hash` is recommended. Numeric token quantities are raw integers, not decimal-adjusted display values.
+Every snapshot requires `chain_id`, `block_number`, `owner`, a human-readable `source`, and an `observations` array. A `block_hash` is recommended. Numeric token quantities are raw nonnegative integers, not decimal-adjusted display values. Supply them as JSON integers or canonical decimal strings (`0` or a nonzero digit followed by digits). Fractional numbers, booleans, signs, whitespace, exponents, and leading-zero strings are rejected rather than coerced.
 
 See [`examples/snapshot.json`](examples/snapshot.json). Addresses and optional block hashes are strictly length-checked. Duplicate standard/token/actor observations are rejected instead of silently overwritten.
 
@@ -63,8 +73,7 @@ This release does not cover Permit2, ERC-2612 signatures, temporary or expiring 
 ## Test
 
 ```bash
-python -m unittest discover -s tests -v
-python -m compileall -q allowancesentry tests
+./test.sh
 ```
 
 ## Support development
@@ -76,15 +85,6 @@ Donations fund additional production. A donor may open the funded-direction issu
 Apache-2.0. See [LICENSE](LICENSE).
 
 
-## Install and run
-
-```sh
-chmod +x install.sh run.sh
-./install.sh
-./run.sh --help
-```
-
-
-## Standard launcher
-
-`./run.sh` is the normal entry point. It runs `./install.sh` automatically when setup is missing, then opens the PySide6 control panel with live output and actions for the demo, tests, repair, and stop. Use `./cli.sh` for CLI-only operation.
+`./run.sh` automatically runs the repeat-safe `./install.sh` when setup is
+missing or incomplete. `./install.sh` installs or repairs every dependency and
+verifies the application before marking the GUI ready.

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 - 2026-09-14
+
+- Reject fractional and noncanonical numeric inputs instead of silently truncating them.
+- Add a safe bundled demo and a root test runner.
+- Connect the GUI demo and test actions to their real workflows and exercise both in CI.
+
 ## 0.1.0 - 2026-08-24
 
 - Add strict offline analysis for ERC-20 allowances and ERC-721/ERC-1155 operator approvals.
